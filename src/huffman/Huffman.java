@@ -10,6 +10,11 @@ import static Print.Print.println;
  * Created by zyf on 2016/8/28.
  */
 public class Huffman {
+    /**
+     * make a huffman tree by a list
+     * @param pool  this is a list
+     * @return
+     */
     public static DataNode makeHuffMan(List<DataNode> pool){
         int size = pool.size()-1;
         DataNode dataNode;
@@ -28,6 +33,12 @@ public class Huffman {
         dataNode = pool.get(0);
         return dataNode;
     }
+
+    /**
+     * find a min wight in list
+     * @param pool
+     * @return
+     */
     public static  int findMin(List<DataNode> pool){
         int size = pool.size();
         int min = 0;
@@ -41,7 +52,14 @@ public class Huffman {
         }
         return min;
     }
+
+    /**
+     * print huffman tree that you just made
+     * @param dataNode
+     * @param code
+     */
     public static void printHuffMan(DataNode dataNode,String code){
+        //find node util he doesn't have a child,in this time,this node is we want print
         if (dataNode.left != null) {
             printHuffMan(dataNode.left, code + "0");
             printHuffMan(dataNode.right,code + "1");
@@ -52,7 +70,7 @@ public class Huffman {
     public static void main(String[] args){
         Random random = new Random(47);
         List<DataNode> list=new ArrayList<DataNode>();
-//        list.clear();
+        //random make ten node and add to a list
         for (int i = 0;i<10;i++){
             DataNode dataNode = new DataNode(String.valueOf(i),random.nextInt(),null,null);
             list.add(dataNode);
