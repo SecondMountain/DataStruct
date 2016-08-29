@@ -55,8 +55,8 @@ public class Huffman {
 
     /**
      * print huffman tree that you just made
-     * @param dataNode
-     * @param code
+     * @param dataNode huffman tree you make
+     * @param code just  code
      */
     public static void printHuffMan(DataNode dataNode,String code){
         //find node util he doesn't have a child,in this time,this node is we want print
