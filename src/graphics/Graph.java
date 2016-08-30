@@ -94,6 +94,7 @@ public class Graph {
     }
     /**
      * 使用普利姆算法，算出最小生成树
+     * 思路：将联通分量的点加入一个集合，未加入联通分量的放在一个集合，只要每次未加入联通分量的集合不为空那么久继续循环寻找点
      */
     public void minTree(Graph graph,int point){
         List<Integer> V = new ArrayList<>();    //原图中所有的点
@@ -105,20 +106,23 @@ public class Graph {
         V.remove(point-1);
         println("初始选取节点为："+U.get(0));
         int vex=-1;
-        while (!V.isEmpty()) {
+        while (!V.isEmpty()) {      //该集合不为空，说明所有点未被加入联通分量中
             double min=1000;
             int vsize = V.size();
             int usize = U.size();
+            //从联通分量中到未联通量找到最小的权值，记录该点
             for (int i = 0; i < usize; i++)
                 for (int j = 0; j < vsize; j++)
                     if (graph.point[U.get(i)-1][V.get(j)-1] <= min && graph.point[U.get(i)-1][V.get(j)-1]!=0) {
                         min = graph.point[U.get(i)-1][V.get(j)-1];
                         vex = j;
                     }
+            //将该点加入到联通分量，并从未联通分量总删除该点
             println("选取节点："+V.get(vex));
             U.add(V.get(vex));
             V.remove(vex);
         }
+        //已经加入所有的联通分量
         println("---------------------最小生成树为------------------------");
         println(U);
     }
@@ -128,12 +132,12 @@ public class Graph {
         Set<Integer> U=new HashSet<>();
         List<Integer> all = new ArrayList<>();
         int min=-2;
-        while ((min = findMin(edgesets))!=-1){
+        while ((min = findMin(edgesets))!=-1){ //当返回值不为-1的时候结束
             int length=all.size();
             int begin = edgesets[min].begin;
             int end = edgesets[min].end;
             boolean notin=false;
-            for (int i = 0;i<length;i++)
+            for (int i = 0;i<length;i++)    //该弧的头结点是否在该联通分量，不在则加入，否则不加
                 if (begin==all.get(i))
                     notin=true;
             if (!notin)
@@ -147,8 +151,9 @@ public class Graph {
 //            U.add(edgesets[min].end);
             edgesets[findMin(edgesets)]=null;
         }
-        println(all);
+        println(all);   //输出该联通分量
     }
+    //从边的集合中找到权值最小的，然后返回，若没有则返回-1
     public int findMin(Edgeset[] edgesets){
         int length = edgesets.length;
         if (length<=0)
@@ -161,6 +166,7 @@ public class Graph {
                 which = i;}
         return which;
     }
+    //生成边的集合
     public Edgeset[] edgesets(Graph graph){
         int edge = graph.arcnum;
         Edgeset[] edgesets = new Edgeset[edge];
@@ -178,30 +184,30 @@ public class Graph {
      */
     public void alllength(Graph graph,int vex){
         int length = graph.point.length;
-        boolean visit[] = new boolean[length];
+        boolean visit[] = new boolean[length];  //记录是否遍历过
         for (int i = 0;i<length;i++)
-            visit[i] = false;
+            visit[i] = false;   //初始化遍历，均设置为未遍历
         List<Integer> list =new ArrayList<>();
-        double sum=0;
+        double sum=0;   //设置路径长度为0
         for (int j= 0;j<length;j++)     //去掉这个for循环就是对单一一个点到其他各点的距离
-            if (!visit[j]){
-                boolean[] ano =visit.clone();
-                alllengthDFS(graph,j,ano,list,sum);
-                list.remove(list.size()-1);
+            if (!visit[j]){     //如果该点未遍历则进行
+                boolean[] ano =visit.clone();   //该遍历记录的一个克隆，若不进行克隆那么就是每个点只进行一次遍历了
+                alllengthDFS(graph,j,ano,list,sum);     //开始遍历方法
+                list.remove(list.size()-1); //加入之后的再移除
             }
     }
     public void alllengthDFS(Graph graph,int vex,boolean[] visit,List<Integer> list,double sum){
         visit[vex] = true;
         list.add(vex+1);
-        println(list+"      长度："+sum);
+        println(list+"      长度："+sum);  //输出到达该点，以及到该点的路径距离
         int length = graph.point.length;
         for (int i = 0;i< length;i++)
-            if (graph.arcCell[vex][i].adj!=0 && !visit[i]){
+            if (graph.arcCell[vex][i].adj!=0 && !visit[i]){     //若该点未遍历
                 boolean[] ano =visit.clone();
-                sum += graph.arcCell[vex][i].adj;
+                sum += graph.arcCell[vex][i].adj; //计算到该点的距离
                 alllengthDFS(graph,i,ano,list,sum);
-                list.remove(list.size()-1);
-                sum -= graph.arcCell[vex][i].adj;
+                list.remove(list.size()-1); //从集合中移除加入过的在上边加入的该点
+                sum -= graph.arcCell[vex][i].adj;   //减去上边加上的值，即记性还原sum值，进行下一次的运算
             }
     }
     /*
@@ -219,16 +225,15 @@ public class Graph {
         for (int i = 0;i<length;i++)
             visit[i] = false;
         List<Integer> list =new ArrayList<>();
-        List<List<Integer>> lists =new ArrayList<>();
+        List<List<Integer>> lists =new ArrayList<>();   //记录最短路径的list的list
         double sum=0;
         double[] road = new double[length];
         for (int j= 0;j<length;j++)     //去掉这个for循环就是对单一一个点到其他各点的距离
             if (!visit[j]){
                 for (int i =0;i<length;i++)
-                    road[i]=9999;
-
+                    road[i]=9999;   //初始化路径长度
                 for (int i =0;i<length;i++)
-                    lists.add(new ArrayList<>());
+                    lists.add(new ArrayList<>());   //初始化路径
                 boolean[] ano =visit.clone();
                 road[j]=0;      //修改j
                 minlengthDFS(graph,j,ano,list,sum,road,lists); //修改j
@@ -245,13 +250,13 @@ public class Graph {
         println(list+"      长度："+sum);
         int length = graph.point.length;
         for (int i = 0;i< length;i++)
-            if (graph.arcCell[vex][i].adj!=0 && !visit[i]){
+            if (graph.arcCell[vex][i].adj!=0 && !visit[i]){ //若该点的距离不是无限远且没有被遍历则进行
                 boolean[] ano =visit.clone();
-                sum += graph.arcCell[vex][i].adj;
+                sum += graph.arcCell[vex][i].adj;   //计算路径长度
 
 //                new ArrayList<Integer>(list)
                 minlengthDFS(graph,i,ano,list,sum,road,lists);
-                if (sum<road[i]) {
+                if (sum<road[i]) {  //若到达该点的路径长度小于已经记录的最小长度，那么更新该值，并更新路径
                     road[i] = sum;
                     lists.set(i,new ArrayList<>(list));
 //                    println(lists.get(i));
