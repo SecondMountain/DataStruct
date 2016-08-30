@@ -42,6 +42,11 @@ public class Graph_Adjacency_List {
             }
         return graph_adjacency_list;
     }
+
+    /**
+     * 深度遍历
+     * @param graph_adjacency_list
+     */
     public void DFSTraverse(Graph_Adjacency_List graph_adjacency_list){
         int length = graph_adjacency_list.point.length;
         boolean visit[] = new boolean[length];
